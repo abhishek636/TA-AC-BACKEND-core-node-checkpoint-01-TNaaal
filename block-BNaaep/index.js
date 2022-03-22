@@ -75,14 +75,7 @@ function handleRequest(req, res) {
             });
           });
         });
-      } else {
-        var username = parsedUrl.query.username;
-        fs.readFile(contactPath + username + ".json", (err, content) => {
-          if (err) return console.log(err);
-          res.setHeader("Content-Type", "application/json");
-          return res.end(content);
-        });
-      }
+      } 
     }
     //Handling with the  css request
     else if (req.method === "GET" && req.url.split(".").pop() === "css") {
