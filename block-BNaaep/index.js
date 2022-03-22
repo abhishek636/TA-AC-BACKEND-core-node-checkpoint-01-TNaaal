@@ -34,9 +34,9 @@ function handleRequest(req, res) {
       fs.createReadStream("./contact.html").pipe(res);
     }
     else if (req.method === "POST" && req.url === "/form") {
-      let parsedData = JSON.parse(store);
+      let parsedData = qs.parse(store);
       let stringifiedData = JSON.stringify(parsedData);
-      fs.open(contactPath + stringifiedData.username + ".json", "wx", (err, fd) => {
+      fs.open(contactPath + parsedData.username + ".json", "wx", (err, fd) => {
         if (err) {
           res.setHeader("Content-Type", "text/html");
           res.end("<h1>username already Exists</h1>");
@@ -46,8 +46,8 @@ function handleRequest(req, res) {
           fs.close(fd, (err) => {
             if (err) return console.log(err);
             res.setHeader("Content-Type", "text/html");
-            res.write(`<h1>${stringifiedData.username} contact saved </h1>`);
-            res.end(store);
+            res.write(`<h1>${parsedData.username} contact saved </h1>`);
+            res.end();
           });
         });
       });
@@ -76,10 +76,19 @@ function handleRequest(req, res) {
           });
         });
       } 
+      else if (parsedUrl.query.username) {
+        let userFileName = path.join(
+          contactPath + parsedUrl.query.username + ".json"
+        );
+        fs.readFile(userFileName, "utf8", (err, content) => {
+          res.setHeader("Content-Type", "text/html");
+          return res.end(content);
+        });
+      }
     }
+
     //Handling with the  css request
     else if (req.method === "GET" && req.url.split(".").pop() === "css") {
-      console.log("We have requested for css file right now");
       const cssFile = req.url;
       res.setHeader("Content-Type", "text/css");
       fs.readFile(__dirname + cssFile, "utf8", (err, content) => {
@@ -89,9 +98,6 @@ function handleRequest(req, res) {
     }
     // Handling with the images requests
     else if (req.method === "GET" && req.url.split(".").pop() === "jpg") {
-      console.log("We have requested for a image right now ");
-      console.log(req.url);
-      console.log(req.url.split(".").pop());
       const imageUrl = req.url;
       res.setHeader("Content-Type", "image/jpg");
       fs.createReadStream(__dirname + req.url).pipe(res);
