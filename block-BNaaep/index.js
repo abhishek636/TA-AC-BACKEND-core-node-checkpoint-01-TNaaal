@@ -30,8 +30,8 @@ function handleRequest(req, res) {
       fs.createReadStream("./about.html").pipe(res);
     }
     else if (req.method === "GET" && req.url === "/contact") {
-        res.setHeader("Content-Type", "text/html");
-        fs.createReadStream("./contact.html").pipe(res);
+      res.setHeader("Content-Type", "text/html");
+      fs.createReadStream("./contact.html").pipe(res);
     }
     else if (req.method === "POST" && req.url === "/form") {
       let parsedData = JSON.parse(store);
@@ -57,7 +57,7 @@ function handleRequest(req, res) {
       if (!req.url.includes("?")) {
         fs.readdir(contactPath, function (err, files) {
           //handling error
-          if (err) {
+          if (err) { 
             return console.log("Unable to scan directory: " + err);
           }
           var length = files.length;
